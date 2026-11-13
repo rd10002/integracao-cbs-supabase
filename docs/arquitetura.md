@@ -150,16 +150,5 @@ erDiagram
   }
 ```
 
-O diagrama é lógico e parcial. Tipos SQL definitivos, constraints, índices e chaves estrangeiras devem ser confirmados no esquema real do Supabase.
 
-## Pontos a validar antes de produção
-1. Confirmar endpoints, métodos e formatos de resposta na documentação oficial da API.
-2. Confirmar que as tabelas e colunas do Supabase correspondem aos objetos enviados.
-3. Confirmar constraints únicas compatíveis com os `on_conflict`.
-4. Rever permissões e utilização da `SERVICE_ROLE_KEY`.
-5. Validar quotas e limites de execução do Apps Script e da API.
-6. Rever retentativas e tratamento de falhas temporárias.
-7. Evitar logs com dados fiscais, tokens ou credenciais desnecessárias.
 
-## Implementação
-O código de referência deverá ficar em `src/IntegracaoCBS.gs`.
