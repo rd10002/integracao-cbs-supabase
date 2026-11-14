@@ -1,4 +1,4 @@
-/************************************************************
+/************************************************************pagamentos_cbs
  * RECEITA FEDERAL - CBS
  * Destino exclusivo: SUPABASE
  *
@@ -304,35 +304,41 @@ function dataSupabase(valor) {
 function normalizarPeriodoApuracao(valor) {
   if (!valor) return null;
 
+  // Converter o formato MM/AAAA para AAAA-MM-01
   const texto = String(valor).trim();
 
-  // Formato recebido da Receita: MM/AAAA
-  const match = texto.match(/^(\d{2})\/(\d{4})$/);
+  const periodo = texto.match(/^(\d{1,2})\/(\d{4})$/);
 
-  if (match) {
-    const mes = Number(match[1]);
-    const ano = Number(match[2]);
+  if (periodo) {
+    const mes = Number(periodo[1]);
+    const ano = Number(periodo[2]);
 
-    if (mes < 1 || mes > 12) return null;
-
-    return String(mes).padStart(2, '0') + '/' + ano;
-  }
-
-  // Também aceita AAAA-MM-DD
-  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-
-  if (iso) {
-    const mes = Number(iso[2]);
-    const dia = Number(iso[3]);
-
-    if (mes < 1 || mes > 12 || dia < 1 || dia > 31) {
-      return null;
+    if (mes < 1 || mes > 12) {
+      throw new Error('Mês de apuração inválido: ' + texto);
     }
 
-    return String(mes).padStart(2, '0') + '/' + iso[1];
+    return ano + '-' +
+      String(mes).padStart(2, '0') +
+      '-01';
   }
 
-  return null;
+  // Se já estiver no formato AAAA-MM-DD, manter.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+    return texto;
+  }
+
+  // Tratar outros formatos de data.
+  const data = new Date(valor);
+
+  if (isNaN(data.getTime())) {
+    throw new Error('Período de apuração inválido: ' + texto);
+  }
+
+  return Utilities.formatDate(
+    data,
+    'UTC',
+    'yyyy-MM-dd'
+  );
 }
 
 
